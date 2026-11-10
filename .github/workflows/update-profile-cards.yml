@@ -1,0 +1,83 @@
+name: Update animated profile cards
+
+on:
+  schedule:
+    # Daily at 00:17 UTC (05:47 India Standard Time).
+    - cron: "17 0 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "README.md"
+      - "profile.json"
+      - "scripts/generate_profile_cards.py"
+      - ".github/workflows/update-profile-cards.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: profile-cards-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out profile repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install font subsetting tools
+        run: python -m pip install --upgrade "fonttools[woff]"
+
+      - name: Fetch the 53-week contribution calendar (metrics use the latest 365 days)
+        env:
+          GH_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          mkdir -p data
+          FROM_DATE="$(date -u -d '370 days ago' +'%Y-%m-%dT00:00:00Z')"
+          TO_DATE="$(date -u +'%Y-%m-%dT23:59:59Z')"
+          gh api graphql \
+            -F login="${GITHUB_REPOSITORY_OWNER}" \
+            -F from="${FROM_DATE}" \
+            -F to="${TO_DATE}" \
+            -f query='query($login: String!, $from: DateTime!, $to: DateTime!) {
+              user(login: $login) {
+                contributionsCollection(from: $from, to: $to, includePrivateContributions: true) {
+                  contributionCalendar {
+                    totalContributions
+                    weeks {
+                      contributionDays {
+                        contributionCount
+                        date
+                        weekday
+                      }
+                    }
+                  }
+                }
+              }
+            }' > data/contributions.json
+
+      - name: Render SVG cards
+        run: python scripts/generate_profile_cards.py
+
+      - name: Commit refreshed data and cards
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/contributions.json cards/
+          if git diff --cached --quiet; then
+            echo "No profile-card changes to commit."
+          else
+            git commit -m "chore: refresh animated profile cards"
+            git push
+          fi

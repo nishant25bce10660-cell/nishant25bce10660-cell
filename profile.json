@@ -1,0 +1,72 @@
+{
+  "username": "nishant25bce10660-cell",
+  "name": "Nishant Singh",
+  "tagline": "B.Tech CSE student at VIT Bhopal exploring web development and AI.",
+  "location": "India",
+  "website": "https://portos-azure.vercel.app/",
+  "portrait": "",
+  "theme": {
+    "background": "#0B1018",
+    "surface": "#111A27",
+    "surface_alt": "#162235",
+    "text": "#F4F7FC",
+    "muted": "#9AAAC0",
+    "border": "#26364B",
+    "accent": "#0A84FF",
+    "accent_light": "#62B5FF",
+    "success": "#30D158"
+  },
+  "tiles": [
+    {
+      "eyebrow": "LIVE PROJECT",
+      "title": "Portfolio OS",
+      "detail": "Explore my desktop-style portfolio",
+      "href": "https://portos-azure.vercel.app/",
+      "glyph": "01"
+    },
+    {
+      "eyebrow": "SOURCE CODE",
+      "title": "GitHub",
+      "detail": "Browse repositories and experiments",
+      "href": "https://github.com/nishant25bce10660-cell",
+      "glyph": "02"
+    },
+    {
+      "eyebrow": "FEATURED WORK",
+      "title": "PORT-OS",
+      "detail": "A personal portfolio operating system",
+      "href": "https://github.com/nishant25bce10660-cell/PORT-OS",
+      "glyph": "03"
+    }
+  ],
+  "repositories": [
+    {
+      "name": "PORT-OS",
+      "description": "A macOS-inspired portfolio desktop with apps, windows, and a personal workspace.",
+      "language": "JavaScript",
+      "url": "https://github.com/nishant25bce10660-cell/PORT-OS",
+      "label": "PORTFOLIO / WEB APP"
+    },
+    {
+      "name": "SMS_SPAM_DETECTION",
+      "description": "An NLP and machine-learning project that classifies SMS messages as spam or ham.",
+      "language": "Python",
+      "url": "https://github.com/nishant25bce10660-cell/SMS_SPAM_DETECTION",
+      "label": "MACHINE LEARNING"
+    },
+    {
+      "name": "digital-literacy-project",
+      "description": "A digital-literacy project covering online safety, email etiquette, and awareness.",
+      "language": "Documentation",
+      "url": "https://github.com/nishant25bce10660-cell/digital-literacy-project",
+      "label": "DIGITAL LITERACY"
+    }
+  ],
+  "animation": {
+    "hero": 0.1,
+    "tiles": [0.85, 1.02, 1.19],
+    "contributions": 1.6,
+    "repositories": [2.35, 2.9, 3.45],
+    "graph": 4.0
+  }
+}
