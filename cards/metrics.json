@@ -1,10 +1,10 @@
 {
-  "active_days": 0,
-  "total": 0,
-  "current_streak": 0,
-  "longest_streak": 0,
-  "best_weekday": "\u2014",
-  "best_weekday_total": 0,
+  "active_days": 5,
+  "total": 16,
+  "current_streak": 1,
+  "longest_streak": 3,
+  "best_weekday": "Tue",
+  "best_weekday_total": 9,
   "month_labels": [
     "Dec",
     "Jan",
@@ -23,6 +23,7 @@
     0,
     0,
     0,
+    12,
     0,
     0,
     0,
@@ -30,9 +31,8 @@
     0,
     0,
     0,
-    0,
-    0
+    4
   ],
-  "peak_date": "\u2014",
-  "peak_count": 0
+  "peak_date": "2026-03-24",
+  "peak_count": 5
 }
