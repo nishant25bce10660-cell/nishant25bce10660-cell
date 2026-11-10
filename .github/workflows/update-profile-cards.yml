@@ -1,8 +1,8 @@
 name: Update animated profile cards
 
-'on':
+on:
   schedule:
-    # Daily at 00:17 UTC (05:47 India Standard Time).
+    # Daily at 00:17 UTC = 05:47 India Standard Time.
     - cron: "17 0 * * *"
   workflow_dispatch:
   push:
@@ -38,60 +38,157 @@ jobs:
       - name: Install font subsetting tools
         run: python -m pip install --upgrade "fonttools[woff]"
 
-      - name: Fetch contribution calendar
+      - name: Fetch public contribution calendar
         env:
-          # PROFILE_TOKEN is optional. Without it, use the repo-scoped token
-          # and query public contributions only.
-          PROFILE_TOKEN: ${{ secrets.PROFILE_TOKEN }}
-          GH_TOKEN: ${{ secrets.PROFILE_TOKEN || github.token }}
-        shell: bash
+          PROFILE_USERNAME: ${{ github.repository_owner }}
         run: |
-          set -euo pipefail
-          mkdir -p data
-          FROM_DATE="$(date -u -d '370 days ago' +'%Y-%m-%dT00:00:00Z')"
-          TO_DATE="$(date -u +'%Y-%m-%dT23:59:59Z')"
+          python - <<'PY'
+          from datetime import date, datetime, timedelta, timezone
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import urlencode
+          from urllib.request import Request, urlopen
+          import json
+          import re
+          import sys
 
-          INCLUDE_PRIVATE=false
-          if [[ -n "${PROFILE_TOKEN:-}" ]]; then
-            INCLUDE_PRIVATE=true
-          fi
+          username = __import__("os").environ["PROFILE_USERNAME"]
+          today = date.today()
+          start = today - timedelta(days=370)
+          query = urlencode({"from": start.isoformat(), "to": today.isoformat()})
+          url = f"https://github.com/users/{username}/contributions?{query}"
+          request = Request(
+              url,
+              headers={
+                  "User-Agent": "Mozilla/5.0 (compatible; GitHubProfileCards/1.0)",
+                  "Accept": "text/html",
+              },
+          )
 
-          gh api graphql \
-            -F login="${GITHUB_REPOSITORY_OWNER}" \
-            -F from="${FROM_DATE}" \
-            -F to="${TO_DATE}" \
-            -F includePrivate="${INCLUDE_PRIVATE}" \
-            -f query='query($login: String!, $from: DateTime!, $to: DateTime!, $includePrivate: Boolean!) {
-              user(login: $login) {
-                contributionsCollection(from: $from, to: $to, includePrivateContributions: $includePrivate) {
-                  contributionCalendar {
-                    totalContributions
-                    weeks {
-                      contributionDays {
-                        contributionCount
-                        date
-                        weekday
-                      }
-                    }
-                  }
-                }
-              }
-            }' > data/contributions.json
+          class CalendarParser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.cells = []
+                  self.tooltip_counts = {}
+                  self.active_tooltip = None
+                  self.active_parts = []
 
-          # Fail here with a clear message if GraphQL returned errors or no user.
-          if ! jq -e '.data.user.contributionsCollection.contributionCalendar.weeks | type == "array"' data/contributions.json >/dev/null; then
-            echo "GitHub GraphQL did not return a contribution calendar. Response:"
-            cat data/contributions.json
-            exit 1
-          fi
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  if tag == "td" and "ContributionCalendar-day" in attrs.get("class", ""):
+                      self.cells.append({
+                          "id": attrs.get("id"),
+                          "date": attrs.get("data-date"),
+                          "level": attrs.get("data-level", "0"),
+                          "count": None,
+                      })
+                  elif tag == "tool-tip" and attrs.get("for"):
+                      self.active_tooltip = attrs["for"]
+                      self.active_parts = []
+                  # Legacy fallback for older GitHub contribution markup.
+                  elif tag == "rect" and attrs.get("data-date"):
+                      label = attrs.get("aria-label", attrs.get("title", ""))
+                      count = self.parse_count(label)
+                      if count is not None:
+                          self.cells.append({
+                              "id": None,
+                              "date": attrs["data-date"],
+                              "level": attrs.get("data-level", "0"),
+                              "count": count,
+                          })
+
+              def handle_data(self, data):
+                  if self.active_tooltip is not None:
+                      self.active_parts.append(data)
+
+              def handle_endtag(self, tag):
+                  if tag == "tool-tip" and self.active_tooltip is not None:
+                      text = " ".join(self.active_parts).strip()
+                      count = self.parse_count(text)
+                      if count is not None:
+                          self.tooltip_counts[self.active_tooltip] = count
+                      self.active_tooltip = None
+                      self.active_parts = []
+
+              @staticmethod
+              def parse_count(text):
+                  if not text:
+                      return None
+                  if re.search(r"\bno contributions\b", text, re.I):
+                      return 0
+                  match = re.search(r"([\d,]+)\s+contributions?\b", text, re.I)
+                  return int(match.group(1).replace(",", "")) if match else None
+
+          try:
+              with urlopen(request, timeout=30) as response:
+                  html = response.read().decode("utf-8", errors="replace")
+          except Exception as exc:
+              print(f"Could not fetch GitHub's public contribution page: {exc}", file=sys.stderr)
+              raise SystemExit(1)
+
+          parser = CalendarParser()
+          parser.feed(html)
+          days = []
+          unresolved_active = []
+          for cell in parser.cells:
+              day_text = cell.get("date")
+              if not day_text:
+                  continue
+              try:
+                  day = date.fromisoformat(day_text[:10])
+              except ValueError:
+                  continue
+              if not (start <= day <= today):
+                  continue
+              count = cell.get("count")
+              if count is None and cell.get("id"):
+                  count = parser.tooltip_counts.get(cell["id"])
+              if count is None:
+                  try:
+                      level = int(cell.get("level", "0"))
+                  except ValueError:
+                      level = 0
+                  if level == 0:
+                      count = 0
+                  else:
+                      unresolved_active.append(day_text)
+                      continue
+              days.append({"date": day.isoformat(), "count": int(count)})
+
+          # Deduplicate legacy/current markup overlaps by date.
+          by_date = {entry["date"]: entry for entry in days}
+          days = [by_date[key] for key in sorted(by_date)]
+          if not days:
+              raise SystemExit(
+                  "Parsed zero contribution days. GitHub may have changed the public calendar HTML; "
+                  "check the fetch step output before rendering."
+              )
+          if unresolved_active:
+              sample = ", ".join(unresolved_active[:5])
+              raise SystemExit(
+                  "GitHub returned active days without their tooltip counts "
+                  f"({sample}). Refusing to publish incomplete statistics."
+              )
+
+          payload = {
+              "username": username,
+              "source": "GitHub public contribution calendar",
+              "fetched_at": datetime.now(timezone.utc).isoformat(),
+              "days": days,
+          }
+          Path("data").mkdir(exist_ok=True)
+          Path("data/contributions.json").write_text(
+              json.dumps(payload, indent=2) + "\n", encoding="utf-8"
+          )
+          total = sum(day["count"] for day in days)
+          print(f"Saved {len(days)} days and {total} public contributions for @{username}.")
+          PY
 
       - name: Render SVG cards
         run: python scripts/generate_profile_cards.py
 
       - name: Commit refreshed data and cards
-        shell: bash
         run: |
-          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/contributions.json cards/
