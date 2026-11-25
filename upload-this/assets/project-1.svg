@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="214" viewBox="0 0 380 214" role="img" aria-label="Project: PORT-OS">
+<defs><style>@keyframes run{to{stroke-dashoffset:-1172}}.run{animation:run 5s linear infinite}
+@keyframes sh{0%,55%{transform:translateX(-160px) skewX(-20deg)}100%{transform:translateX(540px) skewX(-20deg)}}.sh{animation:sh 5s ease-in-out infinite;animation-delay:0.0s}
+@keyframes bob{50%{transform:translate(4px,-4px)}}.ar{animation:bob 1.6s ease-in-out infinite;font:700 22px 'Segoe UI', Ubuntu, 'Helvetica Neue', Arial, sans-serif;fill:#22d3ee}
+@keyframes fl{50%{transform:translateY(-10px)}}.fl{animation:fl 4s ease-in-out infinite}
+.n{font:800 13px Consolas, 'Courier New', Menlo, monospace;fill:#22d3ee}.h{font:700 22px 'Segoe UI', Ubuntu, 'Helvetica Neue', Arial, sans-serif;fill:#e6edf7}.d{font:14px 'Segoe UI', Ubuntu, 'Helvetica Neue', Arial, sans-serif;fill:#8b9ab8}.tg{font:600 12px 'Segoe UI', Ubuntu, 'Helvetica Neue', Arial, sans-serif;fill:#e6edf7}</style><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="190" y2="0" spreadMethod="reflect"><stop offset="0" stop-color="#22d3ee"/><stop offset=".5" stop-color="#8b5cf6"/><stop offset="1" stop-color="#f472b6"/><animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="380 0" dur="7s" repeatCount="indefinite"/></linearGradient>
+<clipPath id="c"><rect x="2" y="2" width="376" height="210" rx="18"/></clipPath>
+<linearGradient id="s"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<radialGradient id="o"><stop offset="0" stop-color="#22d3ee" stop-opacity=".35"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient></defs>
+<rect x="2" y="2" width="376" height="210" rx="18" fill="#0f1630" stroke="#222c55"/>
+<g clip-path="url(#c)"><circle class="fl" cx="340" cy="40" r="90" fill="url(#o)"/>
+<rect class="sh" x="0" y="0" width="90" height="214" fill="url(#s)"/></g>
+<rect class="run" x="2" y="2" width="376" height="210" rx="18" fill="none" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="150 1022"/>
+<text class="n" x="26" y="44">01 / PROJECT</text><text class="ar" x="334" y="48">↗</text>
+<text class="h" x="26" y="80">PORT-OS</text><text class="d" x="26" y="104">A portfolio that behaves like</text><text class="d" x="26" y="126">a tiny operating system.</text><rect x="26" y="162" width="43.6" height="26" rx="13" fill="#22d3ee" fill-opacity=".14" stroke="#22d3ee" stroke-opacity=".6"/><text class="tg" x="47.8" y="179.5" text-anchor="middle">Web</text><rect x="77.6" y="162" width="36.4" height="26" rx="13" fill="#22d3ee" fill-opacity=".14" stroke="#22d3ee" stroke-opacity=".6"/><text class="tg" x="95.8" y="179.5" text-anchor="middle">UI</text><rect x="122.0" y="162" width="86.8" height="26" rx="13" fill="#22d3ee" fill-opacity=".14" stroke="#22d3ee" stroke-opacity=".6"/><text class="tg" x="165.4" y="179.5" text-anchor="middle">Portfolio</text></svg>
