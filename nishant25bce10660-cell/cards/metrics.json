@@ -1,0 +1,38 @@
+{
+  "active_days": 5,
+  "total": 16,
+  "current_streak": 0,
+  "longest_streak": 3,
+  "best_weekday": "Tue",
+  "best_weekday_total": 9,
+  "month_labels": [
+    "Dec",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov"
+  ],
+  "monthly": [
+    0,
+    0,
+    0,
+    12,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    4
+  ],
+  "peak_date": "2026-03-24",
+  "peak_count": 5
+}

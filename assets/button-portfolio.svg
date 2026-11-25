@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="290" height="66" viewBox="0 0 290 66" role="img" aria-label="Open Portfolio OS">
+<defs><style>@keyframes ring{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.14,1.5);opacity:0}}
+.ring{transform-box:fill-box;transform-origin:center;animation:ring 2.2s ease-out infinite}
+@keyframes go{50%{transform:translateX(7px)}}.go{animation:go 1.3s ease-in-out infinite}
+@keyframes sh{0%,60%{transform:translateX(-80px) skewX(-20deg)}100%{transform:translateX(370px) skewX(-20deg)}}.sh{animation:sh 3.4s ease-in-out infinite}
+.t{font:700 17px 'Segoe UI', Ubuntu, 'Helvetica Neue', Arial, sans-serif;fill:#fff}</style><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="145" y2="0" spreadMethod="reflect"><stop offset="0" stop-color="#22d3ee"/><stop offset=".5" stop-color="#8b5cf6"/><stop offset="1" stop-color="#f472b6"/><animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="290 0" dur="7s" repeatCount="indefinite"/></linearGradient><clipPath id="c"><rect x="6" y="9" width="278" height="48" rx="24"/></clipPath>
+<linearGradient id="s"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+<rect class="ring" x="6" y="9" width="278" height="48" rx="24" fill="none" stroke="#22d3ee" stroke-width="2"/>
+<rect x="6" y="9" width="278" height="48" rx="24" fill="url(#g)" stroke="url(#g)" stroke-width="2"/>
+<g clip-path="url(#c)"><rect class="sh" x="0" y="0" width="50" height="66" fill="url(#s)"/></g>
+<text class="t" x="133.0" y="38.5" text-anchor="middle">Open Portfolio OS</text><text class="t go" x="232" y="39">➜</text></svg>
